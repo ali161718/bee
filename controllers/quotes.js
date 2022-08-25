@@ -40,6 +40,7 @@ const quotes = {
 
         const findQuotes = await quote.findAll()
 
+
         if (!findQuotes) {
             result = {
                 code: '01',
@@ -49,11 +50,98 @@ const quotes = {
             return;
         }
 
-        let data = []
+        // console.log(findQuotes);
+        console.log(findQuotes[0]);
+        let dataTrue = [], dataFalse = [];
         findQuotes.forEach(Element => {
-            console.log(Element);
+            console.log(Element.quote);
+            // Element.Quote.dataValues.favorites == true ? dataTrue.push(Element.Quote.dataValues) : dataFalse.push(Element.Quote.dataValues);
         })
 
+        console.log(dataTrue);
+        console.log(dataFalse);
+
+    },
+
+    postQuote: async (req, res) => {
+
+        let result;
+        const payload = req.body;
+
+        const findQuote = await quote.findOne({ where: { quote: payload.quote } });
+
+        if (findQuote != null) {
+            result = {
+                code: '01',
+                message: 'quote sudah pernah di buat'
+            }
+            res.send(result);
+            return;
+        }
+
+        await quote.create(payload);
+
+        result = {
+            code: '00',
+            message: 'Quote berhasil ditambahkan'
+        }
+
+        res.send(result);
+    },
+
+    putQuote: async (req, res) => {
+
+        let result;
+        const id = req.params.id
+        const payload = req.body;
+
+        const findQuote = await quote.findByPk(id)
+
+        if (findQuote == null) {
+            result = {
+                code: '01',
+                message: 'quote tidak ditemukan'
+            }
+            res.send(result);
+            return;
+        }
+
+        await quote.update({
+            quote: payload.quote, favorites: payload.favorites
+        }, { where: { id } })
+
+        result = {
+            code: '00',
+            message: 'Quote berhasil diubah'
+        }
+
+        res.send(result);
+    },
+
+    deleteQuote: async (req, res) => {
+
+        let result;
+        const id = req.params.id
+
+        const findQuote = await quote.findByPk(id)
+
+        if (findQuote == null) {
+            result = {
+                code: '01',
+                message: 'quote tidak ditemukan'
+            }
+            res.send(result);
+            return;
+        }
+
+        await quote.destroy({ where: { id } })
+
+        result = {
+            code: '00',
+            message: 'Quote berhasil didelete'
+        }
+
+        res.send(result);
     }
 
 }

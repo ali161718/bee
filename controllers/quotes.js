@@ -38,7 +38,7 @@ const quotes = {
 
         let result;
 
-        const findQuotes = await quote.findAll()
+        const findQuotes = await quote.findAll({raw: true});
 
 
         if (!findQuotes) {
@@ -50,16 +50,20 @@ const quotes = {
             return;
         }
 
-        // console.log(findQuotes);
-        console.log(findQuotes[0]);
         let dataTrue = [], dataFalse = [];
         findQuotes.forEach(Element => {
-            console.log(Element.quote);
-            // Element.Quote.dataValues.favorites == true ? dataTrue.push(Element.Quote.dataValues) : dataFalse.push(Element.Quote.dataValues);
+            Element.favorites == true ? dataTrue.push(Element) : dataFalse.push(Element);
         })
 
-        console.log(dataTrue);
-        console.log(dataFalse);
+        result = {
+            code: '00',
+            message: 'Quotes',
+            data: {
+                dataTrue, dataFalse
+            }
+        }
+        res.send(result);                
+        
 
     },
 
